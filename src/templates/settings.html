@@ -1,0 +1,115 @@
+<body style="height: 500px">
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
+  />
+
+  <form id="settingsForm" class="ls-form" action="#" onsubmit="onSubmit(e)">
+    <div id="grid" class="ls-grid ls-mt-4">
+      <div id="form-items">
+        <div class="ls-row ls-py-1 form-item">
+          <div class="ls-px-1 ls-column">
+            <label class="ls-label">Item Name</label>
+            <input name="item-name" class="ls-input" type="text" />
+          </div>
+          <div class="ls-px-1 ls-column">
+            <label class="ls-label">Item Length</label>
+            <input class="ls-input" name="item-length" type="number" min="1" />
+          </div>
+          <div class="ls-px-1 ls-column">
+            <button class="ls-button ls-button-secondary" onclick="removeItem()">
+                <div class="ls-button-wrapper">remove</div>
+              </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-row ls-py-1">
+        <button class="ls-button ls-button-primary" onclick="addItem()">
+          <div class="ls-button-wrapper">Add Item</div>
+        </button>
+      </div>
+
+      <div class="ls-row ls-py-1 ls-float-right">
+        <button class="ls-button ls-button-primary" type="submit">
+          <div class="ls-button-wrapper">Save</div>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    const createRow = () => {
+      const row = document.createElement("div");
+      row.classList.add("ls-row");
+      row.classList.add("ls-py-1");
+
+      return row;
+    };
+
+    const createColumn = () => {
+      const column = document.createElement("div");
+      column.classList.add("ls-px-1");
+      column.classList.add("ls-column");
+
+      return column;
+    };
+
+    const createLabel = (labelText) => {
+      const label = document.createElement("label");
+      label.innerText = labelText;
+      label.classList.add("ls-label");
+      return label;
+    };
+
+    const createInput = (attributes) => {
+      const input = document.createElement("input");
+      input.classList.add("ls-input");
+      console.log("Attribute", attributes);
+      attributes.forEach((element) => {
+        input.setAttribute(element.key, element.value);
+      });
+
+      return input;
+    };
+
+    function removeItem(e){
+
+    }
+
+    function addItem() {
+      const row = createRow();
+      const columnOne = createColumn();
+      const columnTwo = createColumn();
+      const itemNameLabel = createLabel("Item Name");
+      columnOne.appendChild(itemNameLabel);
+      const itemLengthLabel = createLabel("Item Length");
+      columnTwo.appendChild(itemLengthLabel);
+
+      const itemNameInput = createInput([{ key: "type", value: "text" }]);
+      columnOne.appendChild(itemNameInput);
+      const itemLengthInput = createInput([
+        { key: "type", value: "number" },
+        { key: "min", value: "1" },
+      ]);
+      columnTwo.appendChild(itemLengthInput);
+
+      row.appendChild(columnOne);
+      row.appendChild(columnTwo);
+
+      document.getElementById("form-items").appendChild(row);
+    }
+    function onSumbit(e) {
+      return false;
+      //   e.preventDefault();
+      //   alert("Form submission");
+      //   console.log("submitting", e);
+      //   const formData = new FormData(e);
+      //   let program = [];
+      //   program.push(formData);
+      //   console.log("formData", formData);
+    }
+
+    //   postMessage({ program });
+  </script>
+</body>

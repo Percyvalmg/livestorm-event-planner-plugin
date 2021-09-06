@@ -20,6 +20,7 @@
   "homepage": "https://github.com/livestorm/livestorm-plugin-boilerplate#readme",
   "devDependencies": {
     "@types/jest": "26.0.20",
+    "@types/luxon": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "4.13.0",
     "@typescript-eslint/parser": "4.13.0",
     "eslint": "7.17.0",
@@ -32,6 +33,8 @@
     "webpack-cli": "4.3.1"
   },
   "dependencies": {
-    "@livestorm/plugin": "https://github.com/livestorm/livestorm-plugin.git"
+    "@livestorm/plugin": "https://github.com/livestorm/livestorm-plugin.git",
+    "countdown": "^2.6.0",
+    "luxon": "^2.0.2"
   }
 }

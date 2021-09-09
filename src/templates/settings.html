@@ -1,0 +1,238 @@
+<body style="height: 500px">
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
+  />
+  <link
+    href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
+    rel="stylesheet"
+  />
+
+  <form id="programForm" class="ls-form">
+    <div class="ls-grid ls-mt-4">
+      <div id="printedProgram">
+        <div
+          id="emptyProgramText"
+          class="
+            ls-row ls-py-1
+            form-item
+            ls-center
+            .ls-text-32-regular
+            ls-mb-3 ls-mt-4
+          "
+        >
+          No Items have been add to your program
+        </div>
+      </div>
+      <div class="ls-row ls-py-1 ls-center">
+        <hr style="width: 70%" />
+      </div>
+      <div class="ls-row ls-py-1 ls-center">
+        <button class="ls-button ls-button-primary ls-px-8" type="submit">
+          <div class="ls-button-wrapper">Save</div>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <form id="addToProgramForm" class="ls-form">
+    <div class="ls-grid ls-mt-4">
+      <div id="form-items">
+        <div class="ls-row ls-py-1 form-item">
+          <div class="ls-px-1 ls-column">
+            <label class="ls-label">Item Name</label>
+            <input
+              id="item-name"
+              name="item-name"
+              class="ls-input"
+              type="text"
+            />
+          </div>
+          <div class="ls-px-1 ls-column">
+            <label class="ls-label">Item Length</label>
+            <input
+              class="ls-input"
+              id="item-length"
+              name="item-length"
+              type="number"
+              min="1"
+            />
+          </div>
+          <div class="ls-px-1 ls-column ls-py-5">
+            <button class="ls-button ls-button-secondary" type="submit">
+              <i class="bx bx-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    class GeneralUIUtil {
+      static createRow = () => {
+        const row = document.createElement("div");
+        row.classList.add("ls-row");
+        row.classList.add("ls-py-1");
+
+        return row;
+      };
+
+      static createColumn = () => {
+        const column = document.createElement("div");
+        column.classList.add("ls-px-1");
+        column.classList.add("ls-column");
+
+        return column;
+      };
+
+      static createLabel = (labelText) => {
+        const label = document.createElement("label");
+        label.innerText = labelText;
+        label.classList.add("ls-label");
+        return label;
+      };
+
+      static createInput = (attributes) => {
+        const input = document.createElement("input");
+        input.classList.add("ls-input");
+        attributes.forEach((element) => {
+          input.setAttribute(element.key, element.value);
+        });
+
+        return input;
+      };
+
+      static createBXIcon = (iconClass) => {
+        const icon = document.createElement("i");
+        icon.classList.add("bx");
+        icon.classList.add(iconClass);
+        return icon;
+      };
+
+      static createButton = (buttonText, icon, onClickEventHandler) => {
+        const button = document.createElement("button");
+        button.classList.add("ls-button");
+        button.classList.add("ls-button-secondary");
+        if (buttonText) button.innerText = buttonText;
+        if (icon) button.appendChild(icon);
+
+        button.addEventListener("click", () => onClickEventHandler(button));
+
+        return button;
+      };
+
+      static createWarningMessage = (innerText, warningType) => {
+        const div = document.createElement("div");
+        div.classList.add("ls-warning-message");
+        div.classList.add(`ls-warning-${warningType}`);
+        div.classList.add(`ls-px-5`);
+        div.innerText = innerText;
+
+        return div;
+      };
+    }
+
+    class ProgramUIUtil {
+      static removeFromProgram(e) {
+        const element = e;
+        element.parentNode.parentNode.remove();
+      }
+
+      static addToProgramUI(itemName, itemLength) {
+        const emptyProgram = document.getElementById("emptyProgramText");
+        if (emptyProgram) emptyProgram.remove();
+        const printedProgram = document.getElementById("printedProgram");
+        const row = GeneralUIUtil.createRow();
+
+        const columnOne = GeneralUIUtil.createColumn();
+        columnOne.appendChild(
+          GeneralUIUtil.createInput([
+            { key: "type", value: "text" },
+            { key: "readonly", value: "true" },
+            { key: "name", value: "item-name-p" },
+            { key: "value", value: itemName },
+          ])
+        );
+
+        const columnTwo = GeneralUIUtil.createColumn();
+        columnTwo.appendChild(
+          GeneralUIUtil.createInput([
+            { key: "type", value: "number" },
+            { key: "readonly", value: "true" },
+            { key: "name", value: "item-length-p" },
+            { key: "value", value: itemLength },
+          ])
+        );
+
+        const columnThree = GeneralUIUtil.createColumn();
+        columnThree.appendChild(
+          GeneralUIUtil.createButton(
+            null,
+            GeneralUIUtil.createBXIcon("bx-trash"),
+            this.removeFromProgram
+          )
+        );
+
+        row.appendChild(columnOne);
+        row.appendChild(columnTwo);
+        row.appendChild(columnThree);
+
+        printedProgram.appendChild(row);
+      }
+
+      static getProgram() {
+        const programJSON = `{{program}}`;
+        if (programJSON) {
+          try {
+            const program = JSON.parse(programJSON);
+            return program;
+          } catch (e) {
+            console.log("Error parsing object");
+            console.error(e);
+            return [];
+          }
+        }
+      }
+
+      static initializeProgram() {
+        const program = this.getProgram();
+        if (program.length > 0)
+          program.forEach((programItem) => {
+            this.addToProgramUI(programItem.title, programItem.timeInMinutes);
+          });
+      }
+    }
+
+    const addToProgramForm = document.getElementById("addToProgramForm");
+    addToProgramForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const ItemName = data.get("item-name");
+      const ItemLength = data.get("item-length");
+      ProgramUIUtil.addToProgram(ItemName, ItemLength);
+      e.target.reset();
+    });
+
+    const programForm = document.getElementById("programForm");
+    programForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      const ItemName = data.getAll("item-name-p");
+      const ItemLength = data.getAll("item-length-p");
+      let i = 0;
+      let program = [];
+      ItemName.forEach((value) => {
+        program.push({
+          order: i + 1,
+          title: value,
+          timeInMinutes: ItemLength[i],
+        });
+        i++;
+      });
+      postMessage({ program });
+    });
+
+    ProgramUIUtil.initializeProgram();
+  </script>
+</body>

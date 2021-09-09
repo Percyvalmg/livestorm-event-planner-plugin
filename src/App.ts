@@ -1,36 +1,14 @@
-import {
-  Users,
-  Stage,
-  PubSub,
-  Modal,
-  Settings,
-  Storage,
-} from "@livestorm/plugin";
+import { Users, Stage, PubSub, Modal, Settings } from "@livestorm/plugin";
 import SettingsApp from "./SettingsApp";
 const modalTimeTemplate = require("./templates/modalTime.html").default;
-interface ProgramItem {
-  order: number;
-  title: string;
-  timeInMinutes: number;
-}
+import { ProgramItem } from "./models/ProgramItem";
+import { ProgramFactory } from "./models/ProgramFactory";
 
 Settings.register(SettingsApp);
-
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function () {
   const me = await Users.me();
-
-  PubSub.subscribe(
-    "change-program",
-    async ({ program }: { program: ProgramItem[] }) => {
-      await Storage.setItem("program", JSON.stringify(program));
-    }
-  );
-
-  const programJSON = await Storage.getItem("program");
-  const program = programJSON ? JSON.parse(programJSON) : undefined;
-
-  console.log("Program", program);
+  const program = await ProgramFactory.getProgram();
 
   if (me.is_team_member && program) {
     PubSub.subscribe("item-countdown-complete", (data) => {
@@ -77,8 +55,12 @@ const showModal = (program: ProgramItem, programLength: number) => {
       title: program.title,
       timeInMinutes: program.timeInMinutes,
       itemNumber: `${program.order} of ${programLength}`,
+      showNextButton: program.order === programLength ? "none" : "block",
     },
-    onMessage: () => {
+    onMessage: ({ event }) => {
+      PubSub.publish(event, {
+        data: program as unknown as Record<string, unknown>,
+      });
       PubSub.publish("item-countdown-complete", {
         data: program as unknown as Record<string, unknown>,
       });

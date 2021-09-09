@@ -1,20 +1,38 @@
-import { Users, Stage, PubSub, Modal } from "@livestorm/plugin";
-const modalTimeTemplate = require("./modalTime.html").default;
+import {
+  Users,
+  Stage,
+  PubSub,
+  Modal,
+  Settings,
+  Storage,
+} from "@livestorm/plugin";
+import SettingsApp from "./SettingsApp";
+const modalTimeTemplate = require("./templates/modalTime.html").default;
 interface ProgramItem {
   order: number;
   title: string;
   timeInMinutes: number;
 }
+
+Settings.register(SettingsApp);
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function () {
   const me = await Users.me();
 
-  const program: ProgramItem[] = [
-    { order: 1, title: "Intro", timeInMinutes: 2 },
-    { order: 2, title: "Presentation", timeInMinutes: 4 },
-    { order: 3, title: "Outro", timeInMinutes: 3 },
-  ];
+  PubSub.subscribe(
+    "change-program",
+    async ({ program }: { program: ProgramItem[] }) => {
+      await Storage.setItem("program", JSON.stringify(program));
+    }
+  );
 
-  if (me.is_team_member) {
+  const programJSON = await Storage.getItem("program");
+  const program = programJSON ? JSON.parse(programJSON) : undefined;
+
+  console.log("Program", program);
+
+  if (me.is_team_member && program) {
     PubSub.subscribe("item-countdown-complete", (data) => {
       let order = (data as unknown as ProgramItem).order;
       if (program.length !== order) {
@@ -29,17 +47,31 @@ export default async function () {
 
 const addStageButton = (program: ProgramItem, programLength: number) => {
   Stage.Buttons.registerStageButton({
-    label: "Start Event",
+    label: "Event Timmer",
     icon: "clock",
+    dropdownActions: [
+      { name: "start", label: "Start Event Timmer" },
+      { name: "end", label: "End Event Timmer" },
+    ],
     onClick: async (event) => {
-      showModal(program, programLength);
+      const clicked = event as unknown as {
+        clickedElement: { name: string; label: string };
+      };
+      switch (clicked.clickedElement.name) {
+        case "start":
+          showModal(program, programLength);
+          break;
+        case "end":
+          showModal({ order: 0, title: "End", timeInMinutes: 0 }, 1);
+          break;
+      }
     },
   });
 };
 
 const showModal = (program: ProgramItem, programLength: number) => {
   Modal.showIframe({
-    size: "normal",
+    size: "large",
     template: modalTimeTemplate,
     variables: {
       title: program.title,
@@ -48,7 +80,7 @@ const showModal = (program: ProgramItem, programLength: number) => {
     },
     onMessage: () => {
       PubSub.publish("item-countdown-complete", {
-        data: program,
+        data: program as unknown as Record<string, unknown>,
       });
     },
   });

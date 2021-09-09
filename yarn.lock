@@ -488,7 +488,7 @@
 
 "@livestorm/plugin@https://github.com/livestorm/livestorm-plugin.git":
   version "0.0.1"
-  resolved "https://github.com/livestorm/livestorm-plugin.git#50e4305e4c53c67c9ae66f84cc303dede8c6eef8"
+  resolved "https://github.com/livestorm/livestorm-plugin.git#6f46d56d7909c17824524be649878e71fd7ca874"
   dependencies:
     uuid "^8.3.2"
 

@@ -1,9 +1,6 @@
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
-/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css" />
 
-<section style="width: max-content; height: 100px">
+<section style="width: max-content; height: 110px">
   <div class="ls-grid ls-mt-4">
     <div class="ls-row ls-py-1">
       <div class="ls-px-1 ls-column">
@@ -22,10 +19,7 @@
         </div>
       </div>
       <div class="ls-px-1 ls-pt-3 ls-column">
-        <button
-          class="ls-button ls-button-primary ls-float-right"
-          onclick="onNextItem()"
-        >
+        <button class="ls-button ls-button-primary ls-float-right" onclick="onNextItem()">
           <div class="ls-button-wrapper">Next Item</div>
         </button>
       </div>
@@ -75,9 +69,8 @@
       countdownTitle.classList.add("ls-warning-error");
     }
 
-    document.getElementById("countdown").innerHTML = `${
-      hours ? hours + "h " : ""
-    }${minutes ? minutes + "m " : ""} ${seconds + "s"}`;
+    document.getElementById("countdown").innerHTML = `${hours ? hours + "h " : ""
+      }${minutes ? minutes + "m " : ""} ${seconds + "s"}`;
 
     if (distance < 0) {
       clearInterval(x);

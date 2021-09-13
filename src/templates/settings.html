@@ -1,62 +1,29 @@
 <body style="height: 500px">
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
-  />
-  <link
-    href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
-    rel="stylesheet"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css" />
+  <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
 
-  <form id="programForm" class="ls-form">
-    <div class="ls-grid ls-mt-4">
-      <div id="printedProgram">
-        <div
-          id="emptyProgramText"
-          class="
-            ls-row ls-py-1
-            form-item
-            ls-center
-            .ls-text-32-regular
-            ls-mb-3 ls-mt-4
-          "
-        >
-          No Items have been add to your program
-        </div>
-      </div>
-      <div class="ls-row ls-py-1 ls-center">
-        <hr style="width: 70%" />
-      </div>
-      <div class="ls-row ls-py-1 ls-center">
-        <button class="ls-button ls-button-primary ls-px-8" type="submit">
-          <div class="ls-button-wrapper">Save</div>
-        </button>
-      </div>
+  <div class="ls-center">
+    <div class="ls-d-block">
+      <h2 class="ls-text-20-semibold">ADD EVENT ITEM</h2>
     </div>
-  </form>
+  </div>
+  <div class="ls-center">
+    <p class="ls-text-12-medium">
+      <br />Add your event item to the program by clicking the {+} button
+    </p>
+  </div>
 
   <form id="addToProgramForm" class="ls-form">
     <div class="ls-grid ls-mt-4">
       <div id="form-items">
         <div class="ls-row ls-py-1 form-item">
-          <div class="ls-px-1 ls-column">
-            <label class="ls-label">Item Name</label>
-            <input
-              id="item-name"
-              name="item-name"
-              class="ls-input"
-              type="text"
-            />
+          <div class="ls-px-1 ls-column" style="width: max-content">
+            <label class="ls-label">Title</label>
+            <input id="item-name" name="item-name" class="ls-input" type="text" placeholder="title" />
           </div>
-          <div class="ls-px-1 ls-column">
-            <label class="ls-label">Item Length</label>
-            <input
-              class="ls-input"
-              id="item-length"
-              name="item-length"
-              type="number"
-              min="1"
-            />
+          <div class="ls-px-1 ls-column" style="width: 150px">
+            <label class="ls-label">Duration (minutes)</label>
+            <input class="ls-input" id="item-length" name="item-length" type="number" min="1" placeholder="1" />
           </div>
           <div class="ls-px-1 ls-column ls-py-5">
             <button class="ls-button ls-button-secondary" type="submit">
@@ -68,9 +35,43 @@
     </div>
   </form>
 
+  <div class="ls-center">
+    <h2 class="ls-text-20-semibold">PROGRAM</h2>
+  </div>
+  <div class="ls-center">
+    <p class="ls-text-12-medium">
+      <br />Once you add your item to the plan, it will show up below.
+    </p>
+  </div>
+
+  <form id="programForm" class="ls-form" style="overflow-y: scroll; height: 155px">
+    <div class="ls-grid ls-mt-4">
+      <div id="printedProgram">
+      </div>
+      <div id="emptyProgramText" class="
+            ls-row ls-py-1
+            form-item
+            ls-center
+            .ls-text-32-regular
+            ls-mb-3 ls-mt-4
+          " style="color: var(--color-grey-500)">
+        No program items to show
+      </div>
+    </div>
+    <div id="alert-area" class="ls-center" style="display: none;">
+
+    </div>
+    <div class="ls-row ls-py-1 ls-center">
+      <button class="ls-button ls-button-primary ls-px-8" type="submit">
+        <div class="ls-button-wrapper">Save</div>
+      </button>
+    </div>
+    </div>
+  </form>
+
   <script>
     class GeneralUIUtil {
-      static createRow = () => {
+      static createRow() {
         const row = document.createElement("div");
         row.classList.add("ls-row");
         row.classList.add("ls-py-1");
@@ -78,7 +79,7 @@
         return row;
       };
 
-      static createColumn = () => {
+      static createColumn() {
         const column = document.createElement("div");
         column.classList.add("ls-px-1");
         column.classList.add("ls-column");
@@ -86,14 +87,14 @@
         return column;
       };
 
-      static createLabel = (labelText) => {
+      static createLabel(labelText) {
         const label = document.createElement("label");
         label.innerText = labelText;
         label.classList.add("ls-label");
         return label;
       };
 
-      static createInput = (attributes) => {
+      static createInput(attributes) {
         const input = document.createElement("input");
         input.classList.add("ls-input");
         attributes.forEach((element) => {
@@ -103,14 +104,14 @@
         return input;
       };
 
-      static createBXIcon = (iconClass) => {
+      static createBXIcon(iconClass) {
         const icon = document.createElement("i");
         icon.classList.add("bx");
         icon.classList.add(iconClass);
         return icon;
       };
 
-      static createButton = (buttonText, icon, onClickEventHandler) => {
+      static createButton(buttonText, icon, onClickEventHandler) {
         const button = document.createElement("button");
         button.classList.add("ls-button");
         button.classList.add("ls-button-secondary");
@@ -122,7 +123,7 @@
         return button;
       };
 
-      static createWarningMessage = (innerText, warningType) => {
+      static createWarningMessage(innerText, warningType) {
         const div = document.createElement("div");
         div.classList.add("ls-warning-message");
         div.classList.add(`ls-warning-${warningType}`);
@@ -131,6 +132,17 @@
 
         return div;
       };
+
+      static showAlert(alertType) {
+        const alert = GeneralUIUtil.createWarningMessage("Saved!", alertType);
+        const alertArea = document.getElementById("alert-area");
+        alertArea.style.display = "";
+        alertArea.appendChild(alert)
+        setTimeout(() => {
+          alert.remove();
+          alertArea.style.display = "none";
+        }, 3000)
+      }
     }
 
     class ProgramUIUtil {
@@ -210,7 +222,7 @@
       const data = new FormData(e.target);
       const ItemName = data.get("item-name");
       const ItemLength = data.get("item-length");
-      ProgramUIUtil.addToProgram(ItemName, ItemLength);
+      ProgramUIUtil.addToProgramUI(ItemName, ItemLength);
       e.target.reset();
     });
 
@@ -230,7 +242,9 @@
         });
         i++;
       });
+
       postMessage({ program });
+      GeneralUIUtil.showAlert("success")
     });
 
     ProgramUIUtil.initializeProgram();

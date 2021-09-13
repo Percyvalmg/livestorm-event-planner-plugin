@@ -34,10 +34,11 @@
   </div>
 </section>
 
-<script> 
+<script>
   const countDownDate = new Date(
     new Date().getTime() + `{{timeInMinutes}}` * 60000
   ).getTime();
+
   const onNextItem = () => {
     postMessage({ event: "next-item" });
     closeModal();
@@ -56,13 +57,13 @@
     const countdownTimer = document.getElementById("countdownTimer");
     const countdownTitle = document.getElementById("countdownTitle");
 
-    if (hours === 0 && minutes === 1 && seconds == 0) {
+    if (hours === 0 && minutes <= 1 && seconds == 0) {
       countdownTimer.style.color = "orange";
       countdownTitle.style.color = "orange";
 
       countdownTimer.classList.remove("ls-warning-success");
-      countdownTimer.classList.add("ls-warning-warning");
       countdownTitle.classList.remove("ls-warning-success");
+      countdownTimer.classList.add("ls-warning-warning");
       countdownTitle.classList.add("ls-warning-warning");
     }
 
@@ -71,8 +72,8 @@
       countdownTitle.style.color = "red";
 
       countdownTimer.classList.remove("ls-warning-warning");
-      countdownTimer.classList.add("ls-warning-error");
       countdownTitle.classList.remove("ls-warning-warning");
+      countdownTimer.classList.add("ls-warning-error");
       countdownTitle.classList.add("ls-warning-error");
     }
 

@@ -1,0 +1,39 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
+/>
+
+<div
+  id="countdownTimer"
+  style="display: none"
+  class="ls-warning-message ls-warning-{{messageType}} ls-px-3 ls-mr-5"
+>
+  <p class="ls-text-24-semibold" id="countdown" style="color: var({{colour}})"></p>
+</div>
+<script>
+  const minutes = parseInt(`{{timeLeft}}`);
+
+  const countDownDate = new Date(new Date().getTime() + minutes).getTime();
+
+  var x = setInterval(function () {
+    var now = new Date().getTime();
+
+    var distance = countDownDate - now;
+    var hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerHTML = `${
+      hours ? hours + "h " : ""
+    }${minutes ? minutes + "m " : ""} ${seconds + "s"}`;
+    document.getElementById("countdownTimer").style.display = "block";
+
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("countdown").innerHTML = "TIME IS UP!!";
+      document.getElementById("countdownTimer").style.display = "block";
+    }
+  }, 1000);
+</script>

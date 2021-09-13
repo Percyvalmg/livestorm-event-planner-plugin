@@ -1,6 +1,16 @@
-import { Users, Stage, PubSub, Modal, Settings } from "@livestorm/plugin";
+import {
+  Users,
+  Stage,
+  PubSub,
+  Modal,
+  Settings,
+  NotificationCenter,
+} from "@livestorm/plugin";
 import SettingsApp from "./SettingsApp";
+import { Countdown } from "./Countdown";
 const modalTimeTemplate = require("./templates/modalTime.html").default;
+const notificationTimerTemplate =
+  require("./templates/notificationTimer.html").default;
 import { ProgramItem } from "./models/ProgramItem";
 import { ProgramFactory } from "./models/ProgramFactory";
 
@@ -12,6 +22,9 @@ export default async function () {
 
   if (me.is_team_member && program) {
     PubSub.subscribe("item-countdown-complete", (data) => {
+      Countdown.stop(() => {
+        console.log("stop")
+      })
       let order = (data as unknown as ProgramItem).order;
       if (program.length !== order) {
         const index = order++;
@@ -19,22 +32,69 @@ export default async function () {
       }
     });
 
-    addStageButton(program[0], program.length);
+    const dropdownActions = program
+      ? [
+          { name: "start", label: "Start Program" },
+          { name: "end", label: "End Program" },
+          { name: "5m", label: "Start 5 minute timer" },
+          { name: "10m", label: "Start 10 minute timer" },
+          { name: "15m", label: "Start 15 minute timer" },
+          { name: "stop", label: "Stop timer" },
+        ]
+      : [
+          { name: "5m", label: "Start 5 minute timer" },
+          { name: "10m", label: "Start 10 minute timer" },
+          { name: "15m", label: "Start 15 minute timer" },
+          { name: "stop", label: "Stop timer" },
+        ];
+
+    addStageButton(program[0], program.length, dropdownActions);
   }
 }
 
-const addStageButton = (program: ProgramItem, programLength: number) => {
+const startCountdown = (itemDurationInMinutes: number) => {
+  Countdown.start(
+    itemDurationInMinutes,
+    ({ timeLeft, seconds, minutes }) => {
+      const firstSeconds = seconds === 59 || seconds === 58;
+      const firstStart = itemDurationInMinutes - 1 === minutes && firstSeconds;
+      const is10SecondInterval = seconds % 8 === 0;
+      const showFrame = is10SecondInterval || firstStart;
+      const isLessThanOneMinuteLeft = minutes === 0;
+      if (showFrame) {
+        NotificationCenter.showIframe(notificationTimerTemplate, {
+          timeLeft,
+          colour: isLessThanOneMinuteLeft
+            ? "--color-orange-700"
+            : "--color-green-700",
+          messageType: isLessThanOneMinuteLeft ? "warning" : "success",
+        });
+      }
+    },
+    () => {
+      NotificationCenter.showIframe(notificationTimerTemplate, {
+        timeLeft: 0,
+        colour: "--color-red-700",
+        messageType: "error",
+      });
+    }
+  );
+};
+
+const addStageButton = (
+  program: ProgramItem,
+  programLength: number,
+  dropdownActions
+) => {
   Stage.Buttons.registerStageButton({
     label: "Event Timmer",
     icon: "clock",
-    dropdownActions: [
-      { name: "start", label: "Start Event Timmer" },
-      { name: "end", label: "End Event Timmer" },
-    ],
+    dropdownActions,
     onClick: async (event) => {
       const clicked = event as unknown as {
         clickedElement: { name: string; label: string };
       };
+
       switch (clicked.clickedElement.name) {
         case "start":
           showModal(program, programLength);
@@ -42,6 +102,23 @@ const addStageButton = (program: ProgramItem, programLength: number) => {
         case "end":
           showModal({ order: 0, title: "End", timeInMinutes: 0 }, 1);
           break;
+        case "5m":
+          startCountdown(5);
+          break;
+        case "10m":
+          startCountdown(10);
+          break;
+        case "15m":
+          startCountdown(15);
+          break;
+        case "stop":
+          Countdown.stop(() => {
+            NotificationCenter.showIframe(notificationTimerTemplate, {
+              timeLeft: 0,
+              colour: "--color-red-700",
+              messageType: "error",
+            });
+          });
       }
     },
   });
@@ -66,4 +143,5 @@ const showModal = (program: ProgramItem, programLength: number) => {
       });
     },
   });
+  startCountdown(program.timeInMinutes);
 };

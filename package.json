@@ -33,8 +33,6 @@
     "webpack-cli": "4.3.1"
   },
   "dependencies": {
-    "@livestorm/plugin": "https://github.com/livestorm/livestorm-plugin.git",
-    "countdown": "^2.6.0",
-    "luxon": "^2.0.2"
+    "@livestorm/plugin": "https://github.com/livestorm/livestorm-plugin.git"
   }
 }

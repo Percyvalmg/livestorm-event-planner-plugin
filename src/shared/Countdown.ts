@@ -1,5 +1,13 @@
+export interface onIntervalChangeProps {
+  timeLeft: number;
+  seconds?: number;
+  minutes?: number;
+}
+
 export class Countdown {
   static interval: NodeJS.Timeout;
+  static normalCountDownInProgress = false;
+  static programCountDownInProgress = false;
 
   static start(
     timeInMinutes: number,
@@ -7,17 +15,17 @@ export class Countdown {
       timeLeft,
       seconds,
       minutes,
-    }: {
-      timeLeft: number;
-      seconds?: number;
-      minutes?: number;
-    }) => void,
+    }: onIntervalChangeProps) => void,
     onCountdownEnd: () => void
   ): void {
+    if (this.normalCountDownInProgress || this.programCountDownInProgress)
+      this.stop();
+
+    console.log("Starting Countdown");
+
     const countDownDate = new Date(
       new Date().getTime() + timeInMinutes * 60000
     ).getTime();
-
     this.interval = setInterval(function () {
       const now = new Date().getTime();
       const timeLeft = countDownDate - now;
@@ -33,15 +41,15 @@ export class Countdown {
         minutes,
       });
 
-      if (timeLeft < 0) {
-        clearInterval(this.interval);
+      if (timeLeft <= 0) {
         onCountdownEnd();
       }
     }, 1000);
   }
 
   static stop(onStopInterval?: () => void): void {
+    console.log("Stopping Countdown");
     clearInterval(this.interval);
-    onStopInterval();
+    if (onStopInterval) onStopInterval();
   }
 }

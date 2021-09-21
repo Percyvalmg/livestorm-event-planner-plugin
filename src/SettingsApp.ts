@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { PubSub, Settings } from "@livestorm/plugin";
+import { ProgramItem } from "./models";
+import { ProgramFactory } from "./shared";
 const template = require("./templates/settings.html").default;
-import { ProgramItem } from "./models/ProgramItem";
-import { ProgramFactory } from "./models/ProgramFactory";
 
 export default async () => {
   PubSub.subscribe("change-program", async ({ program }) => {

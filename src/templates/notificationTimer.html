@@ -2,38 +2,61 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/livestorm/livestorm-plugin/dist/assets/css/style.css"
 />
-
 <div
   id="countdownTimer"
-  style="display: none"
-  class="ls-warning-message ls-warning-{{messageType}} ls-px-3 ls-mr-5"
+  style="display: none; opacity: {{opacity}}"
+  class="ls-warning-message ls-warning-{{messageType}} ls-mr-3 ls-text-center"
 >
-  <p class="ls-text-24-semibold" id="countdown" style="color: var({{colour}})"></p>
+  {{title}}
+  <p
+    class="ls-text-24-semibold"
+    id="countdown"
+    style="color: var({{colour}})"
+  ></p>
+  <span style="display: none" id="nextItem"> </span>
 </div>
 <script>
   const minutes = parseInt(`{{timeLeft}}`);
+  const nextItem = "{{nextItem}}";
+  const messageType = "{{messageType}}";
 
-  const countDownDate = new Date(new Date().getTime() + minutes).getTime();
-
-  var x = setInterval(function () {
-    var now = new Date().getTime();
-
-    var distance = countDownDate - now;
-    var hours = Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("countdown").innerHTML = `${
-      hours ? hours + "h " : ""
-    }${minutes ? minutes + "m " : ""} ${seconds + "s"}`;
-    document.getElementById("countdownTimer").style.display = "block";
-
-    if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("countdown").innerHTML = "TIME IS UP!!";
+  if (messageType === "error") {
+    setInterval(() => {
+      const countdown = document.getElementById("countdown");
+      countdown.innerHTML = `0s`;
       document.getElementById("countdownTimer").style.display = "block";
-    }
-  }, 1000);
+    }, 1000);
+  } else {
+    const countDownDate = new Date(new Date().getTime() + minutes).getTime();
+
+    var x = setInterval(function () {
+      var now = new Date().getTime();
+
+      var distance = countDownDate - now;
+      var hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      const countdown = document.getElementById("countdown");
+
+      if (distance < 0) {
+        countdown.innerHTML = `0h 0m 0s`;
+        clearInterval(x);
+        document.getElementById("countdownTimer").style.display = "none";
+      } else {
+        countdown.innerHTML = `${hours ? hours + "h " : ""}${
+          minutes ? minutes + "m " : ""
+        } ${seconds + "s"}`;
+
+        if (nextItem !== "undefined") {
+          const nextItemText = document.getElementById("nextItem");
+          nextItemText.innerText = `NEXT: ${nextItem}`;
+          nextItemText.style.display = "block";
+        }
+        document.getElementById("countdownTimer").style.display = "block";
+      }
+    }, 1000);
+  }
 </script>

@@ -7,6 +7,9 @@ export const startCountdown = (
   title: string,
   nextItem?: string
 ): void => {
+  const truncatedTitle = truncate(title, 15, false);
+  const truncatedNextItem = nextItem ? truncate(nextItem, 15, false) : nextItem;
+
   Countdown.start(
     itemDurationInMinutes,
     ({ timeLeft, seconds, minutes }) => {
@@ -22,8 +25,8 @@ export const startCountdown = (
             ? "--color-orange-700"
             : "--color-green-700",
           messageType: isLessThanOneMinuteLeft ? "warning" : "success",
-          title,
-          nextItem,
+          title: truncatedTitle,
+          nextItem: truncatedNextItem,
         });
       }
     },
@@ -38,3 +41,15 @@ export const startCountdown = (
     }
   );
 };
+
+function truncate(str, n, useWordBoundary) {
+  if (str.length <= n) {
+    return str;
+  }
+  const subString = str.substr(0, n - 1); // the original check
+  return (
+    (useWordBoundary
+      ? subString.substr(0, subString.lastIndexOf(" "))
+      : subString) + "&hellip;"
+  );
+}

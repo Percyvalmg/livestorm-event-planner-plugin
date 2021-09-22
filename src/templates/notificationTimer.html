@@ -13,7 +13,7 @@
     id="countdown"
     style="color: var({{colour}})"
   ></p>
-  <span style="display: none" id="nextItem"> </span>
+  <span style="display: none" id="nextItem"></span>
 </div>
 <script>
   const minutes = parseInt(`{{timeLeft}}`);
@@ -52,7 +52,7 @@
 
         if (nextItem !== "undefined") {
           const nextItemText = document.getElementById("nextItem");
-          nextItemText.innerText = `NEXT: ${nextItem}`;
+          nextItemText.innerHTML = `NEXT:<br/> ${nextItem}`;
           nextItemText.style.display = "block";
         }
         document.getElementById("countdownTimer").style.display = "block";

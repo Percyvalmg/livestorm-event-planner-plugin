@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Users, Settings } from "@livestorm/plugin";
 import SettingsApp from "./SettingsApp";
-import { registerClockButton, registerNextButton } from "./stage/buttons";
+import {
+  registerClockButton,
+  registerNextButton,
+  registerPreviousButton,
+} from "./stage/buttons";
 import {
   subscribeToCountdownEvents,
   ProgramFactory,
@@ -17,6 +21,7 @@ export default async function () {
     subscribeToCountdownEvents();
     if (program.length) {
       subscribeToProgramEvents(program);
+      registerPreviousButton();
       registerClockButton(true, program[0], program[1].title);
       registerNextButton();
     } else {

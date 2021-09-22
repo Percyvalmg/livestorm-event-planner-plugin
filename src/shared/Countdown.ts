@@ -20,9 +20,6 @@ export class Countdown {
   ): void {
     if (this.normalCountDownInProgress || this.programCountDownInProgress)
       this.stop();
-
-    console.log("Starting Countdown");
-
     const countDownDate = new Date(
       new Date().getTime() + timeInMinutes * 60000
     ).getTime();
@@ -48,7 +45,6 @@ export class Countdown {
   }
 
   static stop(onStopInterval?: () => void): void {
-    console.log("Stopping Countdown");
     clearInterval(this.interval);
     if (onStopInterval) onStopInterval();
   }

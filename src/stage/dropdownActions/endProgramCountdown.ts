@@ -1,16 +1,8 @@
-import { PubSub, NotificationCenter } from "@livestorm/plugin";
-import { Countdown } from "../../shared";
-import { notificationTimerTemplate } from "../../templates";
+import { PubSub } from "@livestorm/plugin";
 
 export const endProgramCountdown = (): void => {
   PubSub.publish("countdown-end", {
     data: { countdownType: "program-countdown" },
-  });
-  Countdown.stop();
-  NotificationCenter.showIframe(notificationTimerTemplate, {
-    timeLeft: 0,
-    colour: "--color-red-700",
-    messageType: "error",
-    title: "Program Ended",
+    scope: "session",
   });
 };

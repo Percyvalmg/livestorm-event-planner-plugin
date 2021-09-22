@@ -52,12 +52,12 @@ const getDropdownActions = (programExists: boolean) => {
 
 const handleStageClockButtonDropdownActionPressed = (
   name: string,
-  programItem: ProgramItem,
+  programItem?: ProgramItem,
   nextProgramItemTitle?: string
 ) => {
   switch (name) {
     case "start":
-      startProgramCountdown(programItem, nextProgramItemTitle);
+      if (programItem) startProgramCountdown(programItem, nextProgramItemTitle);
       break;
     case "end":
       endProgramCountdown();

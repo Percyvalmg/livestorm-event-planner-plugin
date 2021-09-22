@@ -15,9 +15,9 @@ export default async function () {
 
   if (me.is_team_member) {
     subscribeToCountdownEvents();
-    if (program) {
+    if (program.length) {
       subscribeToProgramEvents(program);
-      registerClockButton(true, program[0], program[0].title);
+      registerClockButton(true, program[0], program[1].title);
       registerNextButton();
     } else {
       registerClockButton(false);
